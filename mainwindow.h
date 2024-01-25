@@ -36,7 +36,32 @@ private slots:
 
     void on_pushButton_dark_clicked();
 
-    void viewDatabase();
+    void viewMyDay();
+
+    void viewDaily();
+
+    void viewPlanned();
+
+    void addNewToDo(const QString &TO_DO,
+                    int urgency,
+                    const QString &timeString,
+                    const QString &dateString,
+                    const QString &description);
+
+    void addNewDaily(const QString &TO_DO,
+                     int urgency,
+                     const QString &timeString,
+                     const QString &description);
+
+    void addNewTodaysTask(const QString &todays_task);
+
+    void on_pushButton_add_clicked();
+
+    void on_pushButton_ok_clicked();
+
+    void toggleTabBar();
+
+    void on_toolButton_clicked();
 
 private:
     QTime time;
@@ -44,8 +69,12 @@ private:
     QString timeString;
     QString dateString;
     QString TO_DO;
+    QString todays_task;
+    QString description;
 
-    unsigned int urgency;
+    int urgency;
+    int comboBox_day_current_index;
+    int tabWidget_current_index;
 
     QTime currentTime = QTime::currentTime();
     QDate currentDate = QDate::currentDate();
