@@ -2,6 +2,7 @@
 #include "./ui_mainwindow.h"
 
 #include <QMessageBox>
+#include <QModelIndex>
 #include <QSqlDatabase>
 #include <QSqlError>
 #include <QSqlQuery>
@@ -71,6 +72,7 @@ void MainWindow::viewMyDay()
 
     QSqlTableModel *model = new QSqlTableModel(this, db);
     model->setTable("TodaysTasks");
+    model->setSort(model->fieldIndex("Time"), Qt::AscendingOrder);
 
     // You can set additional properties for the model, such as sorting and filtering
 
@@ -107,6 +109,7 @@ void MainWindow::viewDaily()
 
     QSqlTableModel *model = new QSqlTableModel(this, db);
     model->setTable("Daily");
+    model->setSort(model->fieldIndex("Time"), Qt::AscendingOrder);
 
     if (model->select()) {
         ui->tableView_daily->setModel(model);
@@ -141,7 +144,7 @@ void MainWindow::viewPlanned()
     QSqlTableModel *model = new QSqlTableModel(this, db);
     model->setTable("Tasks");
 
-    // You can set additional properties for the model, such as sorting and filtering
+    model->setSort(model->fieldIndex("Due_Date"), Qt::AscendingOrder);
 
     if (model->select()) {
         // Set the model to the TableView
@@ -152,7 +155,6 @@ void MainWindow::viewPlanned()
 
     db.close();
 }
-
 
 void MainWindow::addNewToDo(const QString &TO_DO,
                             int urgency,
@@ -263,7 +265,7 @@ void MainWindow::on_pushButton_OK_clicked()
     timeString = time.toString("hh:mm");
 
     date = ui->dateEdit->date(); //Retreives Date from the date box
-    dateString = date.toString();
+    dateString = date.toString("yyyy:MM:dd dddd");
 
     description = ui->to_do_Desc
                       ->toPlainText(); //Retreives To_Do description from the to_do_desc text box

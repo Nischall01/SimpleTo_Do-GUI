@@ -410,7 +410,7 @@ QSlider::sub-page:horizontal:disabled{
      <enum>QTabWidget::Rounded</enum>
     </property>
     <property name="currentIndex">
-     <number>0</number>
+     <number>2</number>
     </property>
     <property name="documentMode">
      <bool>true</bool>
@@ -552,6 +552,12 @@ border-radius: 10px;</string>
         <width>662</width>
         <height>345</height>
        </rect>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>662</width>
+        <height>345</height>
+       </size>
       </property>
       <property name="autoFillBackground">
        <bool>true</bool>
