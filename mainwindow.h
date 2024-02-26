@@ -3,9 +3,18 @@
 
 #include <QDate>
 #include <QDateEdit>
+#include <QItemDelegate>
 #include <QMainWindow>
+#include <QStandardItemModel>
 #include <QTimeEdit>
 #include <QWidget>
+
+#include <QApplication>
+#include <QItemDelegate>
+#include <QMessageBox>
+#include <QPainter>
+#include <QPushButton>
+#include <QStyleOptionButton>
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -75,6 +84,7 @@ private:
     int urgency;
     int comboBox_day_current_index;
     int tabWidget_current_index;
+    int rowCount;
 
     QTime currentTime = QTime::currentTime();
     QDate currentDate = QDate::currentDate();

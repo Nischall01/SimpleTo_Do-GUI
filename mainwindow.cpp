@@ -27,6 +27,7 @@ MainWindow::MainWindow(QWidget *parent)
     viewMyDay();
     viewDaily();
     viewPlanned();
+    on_pushButton_light_clicked();
 }
 
 MainWindow::~MainWindow()
@@ -107,10 +108,7 @@ void MainWindow::viewDaily()
     QSqlTableModel *model = new QSqlTableModel(this, db);
     model->setTable("Daily");
 
-    // You can set additional properties for the model, such as sorting and filtering
-
     if (model->select()) {
-        // Set the model to the TableView
         ui->tableView_daily->setModel(model);
 
     } else {
@@ -262,7 +260,7 @@ void MainWindow::on_pushButton_OK_clicked()
 
     time = ui->timeEdit->time(); //Retreives Time from the time box
 
-    timeString = time.toString();
+    timeString = time.toString("hh:mm");
 
     date = ui->dateEdit->date(); //Retreives Date from the date box
     dateString = date.toString();
@@ -271,19 +269,20 @@ void MainWindow::on_pushButton_OK_clicked()
                       ->toPlainText(); //Retreives To_Do description from the to_do_desc text box
 
     if (!TO_DO.isEmpty()) {
-        if (current_index == 3) {
+        if (comboBox_day_current_index == 3) {
             addNewDaily(TO_DO, urgency, timeString, description);
             ui->Result->setText("Successfully added.");
             ui->to_do->clear();
             ui->to_do_Desc->clear();
             ui->spinBox_urgency->setValue(1);
-            ui->tabWidget->setCurrentIndex(2);
+            ui->tabWidget->setCurrentIndex(1);
         } else {
             addNewToDo(TO_DO, urgency, dateString, timeString, description);
             ui->Result->setText("Successfully added.");
             ui->to_do->clear();
             ui->to_do_Desc->clear();
             ui->spinBox_urgency->setValue(1);
+            ui->tabWidget->setCurrentIndex(2);
         }
     }
 
