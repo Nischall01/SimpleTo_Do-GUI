@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/">
+        <file>Simple_ToDo.ico</file>
+    </qresource>
+</RCC>
