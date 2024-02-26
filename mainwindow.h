@@ -72,8 +72,6 @@ private slots:
 
     void on_toolButton_clicked();
 
-    void sortTasksByTime(const QString &todays_task);
-
 private:
     QTime time;
     QDate date;
