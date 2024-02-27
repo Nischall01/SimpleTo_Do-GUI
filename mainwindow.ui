@@ -25,8 +25,8 @@
     <height>370</height>
    </size>
   </property>
-  <property name="windowTitle">
-   <string>MainWindow</string>
+  <property name="layoutDirection">
+   <enum>Qt::LeftToRight</enum>
   </property>
   <property name="autoFillBackground">
    <bool>false</bool>
@@ -369,8 +369,20 @@ QSlider::sub-page:horizontal:disabled{
 }
 </string>
   </property>
+  <property name="iconSize">
+   <size>
+    <width>25</width>
+    <height>25</height>
+   </size>
+  </property>
+  <property name="toolButtonStyle">
+   <enum>Qt::ToolButtonIconOnly</enum>
+  </property>
   <property name="tabShape">
    <enum>QTabWidget::Rounded</enum>
+  </property>
+  <property name="unifiedTitleAndToolBarOnMac">
+   <bool>true</bool>
   </property>
   <widget class="QWidget" name="centralwidget">
    <property name="enabled">
@@ -410,7 +422,7 @@ QSlider::sub-page:horizontal:disabled{
      <enum>QTabWidget::Rounded</enum>
     </property>
     <property name="currentIndex">
-     <number>2</number>
+     <number>4</number>
     </property>
     <property name="documentMode">
      <bool>true</bool>
@@ -488,8 +500,8 @@ border-radius: 10px;</string>
        <property name="text">
         <string>Ok</string>
        </property>
-       <property name="shortcut">
-        <string>Return</string>
+       <property name="checkable">
+        <bool>false</bool>
        </property>
       </widget>
      </widget>
@@ -646,7 +658,7 @@ color: rgb(0, 0, 0);</string>
      <widget class="QLineEdit" name="Result">
       <property name="geometry">
        <rect>
-        <x>120</x>
+        <x>145</x>
         <y>305</y>
         <width>335</width>
         <height>25</height>
@@ -737,7 +749,7 @@ color: rgb(0, 0, 0);</string>
      <widget class="QPushButton" name="pushButton_OK">
       <property name="geometry">
        <rect>
-        <x>250</x>
+        <x>275</x>
         <y>260</y>
         <width>70</width>
         <height>20</height>
@@ -867,6 +879,9 @@ border-radius: 10px;</string>
       </property>
       <property name="currentIndex">
        <number>0</number>
+      </property>
+      <property name="maxVisibleItems">
+       <number>10</number>
       </property>
       <item>
        <property name="text">
@@ -999,7 +1014,7 @@ border-radius: 10px;</string>
       </property>
       <property name="geometry">
        <rect>
-        <x>230</x>
+        <x>255</x>
         <y>135</y>
         <width>111</width>
         <height>20</height>
@@ -1105,7 +1120,7 @@ background-color: rgb(209, 209, 209);
       <property name="midLineWidth">
        <number>0</number>
       </property>
-      <widget class="QLabel" name="label_Urgency_2">
+      <widget class="QLabel" name="label_settings_Urgency">
        <property name="geometry">
         <rect>
          <x>25</x>
@@ -1180,19 +1195,22 @@ background-color: rgb(209, 209, 209);
         <rect>
          <x>100</x>
          <y>0</y>
-         <width>3</width>
-         <height>60</height>
+         <width>1</width>
+         <height>59</height>
         </rect>
        </property>
        <property name="styleSheet">
         <string notr="true"/>
+       </property>
+       <property name="frameShadow">
+        <enum>QFrame::Plain</enum>
        </property>
        <property name="orientation">
         <enum>Qt::Vertical</enum>
        </property>
       </widget>
      </widget>
-     <widget class="QLabel" name="label">
+     <widget class="QLabel" name="label_settings_AddR">
       <property name="geometry">
        <rect>
         <x>50</x>
@@ -1225,6 +1243,180 @@ background-color: rgb(209, 209, 209);
        <set>Qt::AlignCenter</set>
       </property>
      </widget>
+     <widget class="QLabel" name="label_settings_Theme">
+      <property name="geometry">
+       <rect>
+        <x>50</x>
+        <y>161</y>
+        <width>555</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <fontweight>DemiBold</fontweight>
+       </font>
+      </property>
+      <property name="autoFillBackground">
+       <bool>true</bool>
+      </property>
+      <property name="frameShape">
+       <enum>QFrame::Box</enum>
+      </property>
+      <property name="frameShadow">
+       <enum>QFrame::Plain</enum>
+      </property>
+      <property name="lineWidth">
+       <number>1</number>
+      </property>
+      <property name="text">
+       <string>Theme</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+     </widget>
+     <widget class="QFrame" name="frame_2">
+      <property name="geometry">
+       <rect>
+        <x>50</x>
+        <y>180</y>
+        <width>555</width>
+        <height>60</height>
+       </rect>
+      </property>
+      <property name="autoFillBackground">
+       <bool>true</bool>
+      </property>
+      <property name="frameShape">
+       <enum>QFrame::Box</enum>
+      </property>
+      <property name="frameShadow">
+       <enum>QFrame::Plain</enum>
+      </property>
+      <property name="lineWidth">
+       <number>1</number>
+      </property>
+      <property name="midLineWidth">
+       <number>0</number>
+      </property>
+      <widget class="QLabel" name="label_settings_Mode">
+       <property name="geometry">
+        <rect>
+         <x>15</x>
+         <y>20</y>
+         <width>75</width>
+         <height>20</height>
+        </rect>
+       </property>
+       <property name="layoutDirection">
+        <enum>Qt::LeftToRight</enum>
+       </property>
+       <property name="autoFillBackground">
+        <bool>false</bool>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">border: 0px;</string>
+       </property>
+       <property name="frameShape">
+        <enum>QFrame::HLine</enum>
+       </property>
+       <property name="text">
+        <string>Default Mode</string>
+       </property>
+      </widget>
+      <widget class="QRadioButton" name="radioButton_Light">
+       <property name="geometry">
+        <rect>
+         <x>310</x>
+         <y>20</y>
+         <width>80</width>
+         <height>20</height>
+        </rect>
+       </property>
+       <property name="autoFillBackground">
+        <bool>false</bool>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">border: 0px;</string>
+       </property>
+       <property name="text">
+        <string>Light</string>
+       </property>
+       <property name="checked">
+        <bool>false</bool>
+       </property>
+      </widget>
+      <widget class="QRadioButton" name="radioButton_Dark">
+       <property name="geometry">
+        <rect>
+         <x>150</x>
+         <y>20</y>
+         <width>90</width>
+         <height>20</height>
+        </rect>
+       </property>
+       <property name="autoFillBackground">
+        <bool>false</bool>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">border: 0px;
+</string>
+       </property>
+       <property name="text">
+        <string>Dark</string>
+       </property>
+       <property name="checked">
+        <bool>true</bool>
+       </property>
+      </widget>
+      <widget class="Line" name="line_3">
+       <property name="geometry">
+        <rect>
+         <x>100</x>
+         <y>0</y>
+         <width>1</width>
+         <height>59</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true"/>
+       </property>
+       <property name="frameShadow">
+        <enum>QFrame::Plain</enum>
+       </property>
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
+       </property>
+      </widget>
+     </widget>
+     <widget class="QPushButton" name="pushButton_settings_Save">
+      <property name="geometry">
+       <rect>
+        <x>290</x>
+        <y>280</y>
+        <width>80</width>
+        <height>25</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">background-color: rgb(0, 0, 0);
+color: rgb(255, 255, 255);
+border-radius: 10px;</string>
+      </property>
+      <property name="text">
+       <string>Save</string>
+      </property>
+      <property name="checkable">
+       <bool>false</bool>
+      </property>
+      <property name="default">
+       <bool>false</bool>
+      </property>
+      <property name="flat">
+       <bool>false</bool>
+      </property>
+     </widget>
     </widget>
    </widget>
    <widget class="QFrame" name="sideBar">
@@ -1236,14 +1428,26 @@ background-color: rgb(209, 209, 209);
       <height>369</height>
      </rect>
     </property>
+    <property name="sizePolicy">
+     <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+      <horstretch>0</horstretch>
+      <verstretch>0</verstretch>
+     </sizepolicy>
+    </property>
+    <property name="autoFillBackground">
+     <bool>true</bool>
+    </property>
     <property name="styleSheet">
-     <string notr="true">background-color: rgb(163, 166, 170);</string>
+     <string notr="true"/>
     </property>
     <property name="frameShape">
      <enum>QFrame::StyledPanel</enum>
     </property>
     <property name="frameShadow">
-     <enum>QFrame::Raised</enum>
+     <enum>QFrame::Plain</enum>
+    </property>
+    <property name="lineWidth">
+     <number>1</number>
     </property>
     <widget class="QPushButton" name="pushButton_add">
      <property name="geometry">
@@ -1260,6 +1464,9 @@ background-color: rgb(209, 209, 209);
        <height>16777215</height>
       </size>
      </property>
+     <property name="autoFillBackground">
+      <bool>true</bool>
+     </property>
      <property name="styleSheet">
       <string notr="true"/>
      </property>
@@ -1269,6 +1476,9 @@ background-color: rgb(209, 209, 209);
      <property name="icon">
       <iconset>
        <normaloff>../build-SimpleTo_Do-GUI--Desktop_Qt_6_6_0_MinGW_64_bit-Debug/plus.png</normaloff>../build-SimpleTo_Do-GUI--Desktop_Qt_6_6_0_MinGW_64_bit-Debug/plus.png</iconset>
+     </property>
+     <property name="flat">
+      <bool>false</bool>
      </property>
     </widget>
     <widget class="QPushButton" name="pushButton_dark">
@@ -1316,7 +1526,7 @@ background-color: rgb(209, 209, 209);
       </rect>
      </property>
      <property name="styleSheet">
-      <string notr="true">border-radius: 30%;</string>
+      <string notr="true">border-radius: 3px;</string>
      </property>
      <property name="text">
       <string/>
@@ -1343,9 +1553,6 @@ background-color: rgb(209, 209, 209);
        <width>20</width>
        <height>21</height>
       </rect>
-     </property>
-     <property name="text">
-      <string>...</string>
      </property>
      <property name="popupMode">
       <enum>QToolButton::DelayedPopup</enum>

@@ -35,34 +35,24 @@ private slots:
 
     void on_comboBox_day_currentIndexChanged(int index);
 
-    void on_radioButton_Dial_toggled(bool checked);
-
-    void on_radioButton_SpinBox_toggled();
-
     void on_pushButton_addDesc_clicked();
 
     void on_pushButton_light_clicked();
 
     void on_pushButton_dark_clicked();
 
-    void viewMyDay();
+    void addNewMyDayTask(const QString &todays_task);
 
-    void viewDaily();
+    void addNewPlannedTask(const QString &TO_DO,
+                           int urgency,
+                           const QString &timeString,
+                           const QString &dateString,
+                           const QString &description);
 
-    void viewPlanned();
-
-    void addNewToDo(const QString &TO_DO,
-                    int urgency,
-                    const QString &timeString,
-                    const QString &dateString,
-                    const QString &description);
-
-    void addNewDaily(const QString &TO_DO,
-                     int urgency,
-                     const QString &timeString,
-                     const QString &description);
-
-    void addNewTodaysTask(const QString &todays_task);
+    void addNewDailyTask(const QString &TO_DO,
+                         int urgency,
+                         const QString &timeString,
+                         const QString &description);
 
     void on_pushButton_add_clicked();
 
@@ -71,6 +61,22 @@ private slots:
     void toggleTabBar();
 
     void on_toolButton_clicked();
+
+    void setviewTables();
+
+    // Settings Section
+
+    void loadSettings();
+
+    void on_radioButton_Dial_toggled(bool checked);
+
+    void on_radioButton_SpinBox_toggled(bool checked);
+
+    void on_radioButton_Dark_toggled(bool checked);
+
+    void on_radioButton_Light_toggled(bool checked);
+
+    void on_pushButton_settings_Save_clicked();
 
 private:
     QTime time;

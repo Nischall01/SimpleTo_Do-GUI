@@ -1,6 +1,9 @@
 #include "mainwindow.h"
 #include "./ui_mainwindow.h"
 
+#include "json.hpp"
+#include <fstream>
+
 #include <QMessageBox>
 #include <QModelIndex>
 #include <QSqlDatabase>
@@ -9,6 +12,9 @@
 #include <QSqlRecord>
 #include <QSqlTableModel>
 #include <QStandardItemModel>
+#include <QTimer>
+
+using json = nlohmann::json;
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -25,10 +31,9 @@ MainWindow::MainWindow(QWidget *parent)
 
     ui->tabWidget->setCurrentIndex(0);
 
-    viewMyDay();
-    viewDaily();
-    viewPlanned();
-    on_pushButton_light_clicked();
+    setviewTables();
+
+    loadSettings();
 }
 
 MainWindow::~MainWindow()
@@ -50,11 +55,13 @@ void MainWindow::on_comboBox_day_currentIndexChanged(int index)
     }
 }
 
-void MainWindow::viewMyDay()
+void MainWindow::setviewTables()
 {
+    // Create database connection
     QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
     db.setDatabaseName("Data.db");
 
+    // Open the database
     if (!db.open()) {
         QMessageBox::critical(this,
                               "Error",
@@ -62,105 +69,37 @@ void MainWindow::viewMyDay()
         return;
     }
 
-    // Check if the table "tasks" exists in the database
-    QStringList tables = db.tables();
-    if (!tables.contains("TodaysTasks", Qt::CaseInsensitive)) {
-        QMessageBox::critical(this, "Error", "Table 'Tasks' not found in the database");
-        db.close();
-        return;
-    }
+    // Create models for different tables
+    QSqlTableModel *myday = new QSqlTableModel(this, db);
+    myday->setTable("MyDay");
+    myday->setSort(myday->fieldIndex("Time"), Qt::AscendingOrder);
+    myday->setEditStrategy(QSqlTableModel::OnFieldChange);
+    myday->select();
 
-    QSqlTableModel *model = new QSqlTableModel(this, db);
-    model->setTable("TodaysTasks");
-    model->setSort(model->fieldIndex("Time"), Qt::AscendingOrder);
+    QSqlTableModel *daily = new QSqlTableModel(this, db);
+    daily->setTable("Daily");
+    daily->setSort(daily->fieldIndex("Time"), Qt::AscendingOrder);
+    daily->setEditStrategy(QSqlTableModel::OnFieldChange);
+    daily->select();
 
-    // You can set additional properties for the model, such as sorting and filtering
+    QSqlTableModel *planned = new QSqlTableModel(this, db);
+    planned->setTable("Planned");
+    planned->setSort(planned->fieldIndex("Date"), Qt::AscendingOrder);
+    planned->setEditStrategy(QSqlTableModel::OnFieldChange);
+    planned->select();
 
-    if (model->select()) {
-        // Set the model to the TableView
-        ui->tableView_myday->setModel(model);
+    //Set models to respective QTablesetviewTables
 
-    } else {
-        QMessageBox::critical(this, "Error", "Failed to retrieve data from the 'tasks' table");
-    }
-
-    db.close();
+    ui->tableView_myday->setModel(myday);
+    ui->tableView_daily->setModel(daily);
+    ui->tableView_planned->setModel(planned);
 }
 
-void MainWindow::viewDaily()
-{
-    QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
-    db.setDatabaseName("Data.db");
-
-    if (!db.open()) {
-        QMessageBox::critical(this,
-                              "Error",
-                              "Unable to open the database: " + db.lastError().text());
-        return;
-    }
-
-    // Check if the table "tasks" exists in the database
-    QStringList tables = db.tables();
-    if (!tables.contains("Daily", Qt::CaseInsensitive)) {
-        QMessageBox::critical(this, "Error", "Table 'Tasks' not found in the database");
-        db.close();
-        return;
-    }
-
-    QSqlTableModel *model = new QSqlTableModel(this, db);
-    model->setTable("Daily");
-    model->setSort(model->fieldIndex("Time"), Qt::AscendingOrder);
-
-    if (model->select()) {
-        ui->tableView_daily->setModel(model);
-
-    } else {
-        QMessageBox::critical(this, "Error", "Failed to retrieve data from the 'tasks' table");
-    }
-
-    db.close();
-}
-
-void MainWindow::viewPlanned()
-{
-    QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
-    db.setDatabaseName("Data.db");
-
-    if (!db.open()) {
-        QMessageBox::critical(this,
-                              "Error",
-                              "Unable to open the database: " + db.lastError().text());
-        return;
-    }
-
-    // Check if the table "tasks" exists in the database
-    QStringList tables = db.tables();
-    if (!tables.contains("Tasks", Qt::CaseInsensitive)) {
-        QMessageBox::critical(this, "Error", "Table 'Tasks' not found in the database");
-        db.close();
-        return;
-    }
-
-    QSqlTableModel *model = new QSqlTableModel(this, db);
-    model->setTable("Tasks");
-
-    model->setSort(model->fieldIndex("Due_Date"), Qt::AscendingOrder);
-
-    if (model->select()) {
-        // Set the model to the TableView
-        ui->tableView_planned->setModel(model);
-    } else {
-        QMessageBox::critical(this, "Error", "Failed to retrieve data from the 'tasks' table");
-    }
-
-    db.close();
-}
-
-void MainWindow::addNewToDo(const QString &TO_DO,
-                            int urgency,
-                            const QString &dateString,
-                            const QString &timeString,
-                            const QString &description)
+void MainWindow::addNewPlannedTask(const QString &TO_DO,
+                                   int urgency,
+                                   const QString &dateString,
+                                   const QString &timeString,
+                                   const QString &description)
 {
     QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
     db.setDatabaseName("Data.db");
@@ -173,9 +112,10 @@ void MainWindow::addNewToDo(const QString &TO_DO,
     }
 
     QSqlQuery query;
-    query.prepare("INSERT INTO Tasks (To_Do, Urgency, Due_Date, Time, Description, Status) VALUES "
-                  "(:to_do, :urgency, "
-                  ":date, :time, :description, :status)");
+    query.prepare(
+        "INSERT INTO Planned (To_Do, Urgency, Due_Date, Time, Description, Status) VALUES "
+        "(:to_do, :urgency, "
+        ":date, :time, :description, :status)");
     query.bindValue(":to_do", TO_DO);
     query.bindValue(":urgency", urgency);
     query.bindValue(":date", dateString);
@@ -192,7 +132,7 @@ void MainWindow::addNewToDo(const QString &TO_DO,
     db.close();
 }
 
-void MainWindow::addNewTodaysTask(const QString &todays_task)
+void MainWindow::addNewMyDayTask(const QString &todays_task)
 {
     QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
     db.setDatabaseName("Data.db");
@@ -205,7 +145,7 @@ void MainWindow::addNewTodaysTask(const QString &todays_task)
     }
 
     QSqlQuery query;
-    query.prepare("INSERT INTO TodaysTasks (Today, Urgency, Time, Description, Status) VALUES "
+    query.prepare("INSERT INTO MyDay (To_Do, Urgency, Time, Description, Status) VALUES "
                   "(:today, :urgency, :time, :description, :status)");
     query.bindValue(":today", todays_task);
 
@@ -218,10 +158,10 @@ void MainWindow::addNewTodaysTask(const QString &todays_task)
     db.close();
 }
 
-void MainWindow::addNewDaily(const QString &TO_DO,
-                             int urgency,
-                             const QString &timeString,
-                             const QString &description)
+void MainWindow::addNewDailyTask(const QString &TO_DO,
+                                 int urgency,
+                                 const QString &timeString,
+                                 const QString &description)
 {
     QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
     db.setDatabaseName("Data.db");
@@ -272,42 +212,27 @@ void MainWindow::on_pushButton_OK_clicked()
 
     if (!TO_DO.isEmpty()) {
         if (comboBox_day_current_index == 3) {
-            addNewDaily(TO_DO, urgency, timeString, description);
+            addNewDailyTask(TO_DO, urgency, timeString, description);
             ui->Result->setText("Successfully added.");
             ui->to_do->clear();
             ui->to_do_Desc->clear();
             ui->spinBox_urgency->setValue(1);
             ui->tabWidget->setCurrentIndex(1);
+
         } else {
-            addNewToDo(TO_DO, urgency, dateString, timeString, description);
+            addNewPlannedTask(TO_DO, urgency, dateString, timeString, description);
             ui->Result->setText("Successfully added.");
             ui->to_do->clear();
             ui->to_do_Desc->clear();
             ui->spinBox_urgency->setValue(1);
             ui->tabWidget->setCurrentIndex(2);
         }
+
+        // Clear the result message after 3 seconds
+        QTimer::singleShot(3000, this, [this]() { ui->Result->clear(); });
     }
 
-    ui->to_do_Desc->setEnabled(false);
-
-    viewDaily();
-    viewPlanned();
-}
-
-void MainWindow::on_radioButton_Dial_toggled(bool checked)
-{
-    ui->dial_urgency->show();
-    ui->spinBox_urgency->setButtonSymbols(QAbstractSpinBox::NoButtons);
-    ui->spinBox_urgency->setReadOnly(checked);
-    ui->spinBox_urgency->setToolTip("Urgency");
-}
-
-void MainWindow::on_radioButton_SpinBox_toggled()
-{
-    ui->dial_urgency->hide();
-    ui->spinBox_urgency->setButtonSymbols(QAbstractSpinBox::UpDownArrows);
-    ui->spinBox_urgency->setReadOnly(false);
-    ui->spinBox_urgency->setToolTip("Select the urgency");
+    setviewTables();
 }
 
 void MainWindow::on_pushButton_addDesc_clicked()
@@ -321,14 +246,18 @@ void MainWindow::on_pushButton_addDesc_clicked()
 
 void MainWindow::on_pushButton_light_clicked()
 {
-    ui->tabWidget->setStyleSheet("background-color: rgb(199, 199, 199); color: rgb(0, 0, 0);");
+    ui->radioButton_Light->setChecked(true);
+    ui->tabWidget->setStyleSheet("background-color: #f0f0f0; color: rgb(0, 0, 0);");
+    ui->sideBar->setStyleSheet("background-color: rgb(191, 191, 191); color: rgb(0, 0, 0);");
     ui->pushButton_light->hide();
     ui->pushButton_dark->show();
 }
 
 void MainWindow::on_pushButton_dark_clicked()
 {
+    ui->radioButton_Dark->setChecked(true);
     ui->tabWidget->setStyleSheet("background-color: rgb(55, 55, 55); color: rgb(250,250,250);");
+    ui->sideBar->setStyleSheet("background-color: rgb(55, 55, 55); color: rgb(250,250,250);");
     ui->pushButton_dark->hide();
     ui->pushButton_light->show();
 }
@@ -343,10 +272,10 @@ void MainWindow::on_pushButton_ok_clicked()
 {
     todays_task = ui->lineEdit_todaysTask->text();
     if (!todays_task.isEmpty()) {
-        addNewTodaysTask(todays_task);
+        addNewMyDayTask(todays_task);
         ui->lineEdit_todaysTask->clear();
     }
-    viewMyDay();
+    setviewTables();
 }
 
 void MainWindow::toggleTabBar()
@@ -357,4 +286,88 @@ void MainWindow::toggleTabBar()
 void MainWindow::on_toolButton_clicked()
 {
     toggleTabBar();
+}
+
+// Settings Section
+
+void MainWindow::loadSettings()
+{
+    json data;
+    std::ifstream file("settings.json");
+    if (!file.is_open()) {
+        QMessageBox::critical(this, "Error", "Unable to open settings.json: ");
+        return;
+    }
+    file >> data;
+    file.close();
+
+    int theme_mode = data["DefaultThemeMode"]; // 0 is Dark mode and 1 is light mode
+    int urgency_mode = data["DefaultUrgencyMode"];
+
+    if (theme_mode == 0) {
+        on_pushButton_dark_clicked();
+        ui->radioButton_Dark->setChecked(true);
+    } else {
+        on_pushButton_light_clicked();
+        ui->radioButton_Light->setChecked(true);
+    }
+    if (urgency_mode == 0) {
+        ui->radioButton_Dial->setChecked(true);
+    } else {
+        ui->radioButton_SpinBox->setChecked(true);
+    }
+}
+
+void MainWindow::on_radioButton_Dial_toggled(bool checked)
+{
+    if (checked) {
+        ui->dial_urgency->show();
+        ui->spinBox_urgency->setButtonSymbols(QAbstractSpinBox::NoButtons);
+        ui->spinBox_urgency->setReadOnly(checked);
+        ui->spinBox_urgency->setToolTip("Urgency");
+    }
+}
+
+void MainWindow::on_radioButton_SpinBox_toggled(bool checked)
+{
+    if (checked) {
+        ui->dial_urgency->hide();
+        ui->spinBox_urgency->setButtonSymbols(QAbstractSpinBox::UpDownArrows);
+        ui->spinBox_urgency->setReadOnly(false);
+        ui->spinBox_urgency->setToolTip("Select the urgency");
+    }
+}
+
+void MainWindow::on_radioButton_Dark_toggled(bool checked)
+{
+    if (checked) {
+        on_pushButton_dark_clicked();
+    }
+}
+
+void MainWindow::on_radioButton_Light_toggled(bool checked)
+{
+    if (checked) {
+        on_pushButton_light_clicked();
+    }
+}
+
+void MainWindow::on_pushButton_settings_Save_clicked()
+{
+    json data;
+    data["DefaultThemeMode"] = ui->radioButton_Dark->isChecked()
+                                   ? 0
+                                   : 1; // Save 0 for Dark mode, 1 for Light mode
+
+    data["DefaultUrgencyMode"] = ui->radioButton_Dial->isChecked()
+                                     ? 0
+                                     : 1; // Save 0 for Dark mode, 1 for Light mode
+
+    std::ofstream file("settings.json");
+    if (!file.is_open()) {
+        QMessageBox::critical(this, "Error", "Unable to open settings.json: ");
+        return;
+    }
+    file << data;
+    file.close();
 }
