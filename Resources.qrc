@@ -1,5 +1,10 @@
 <RCC>
     <qresource prefix="/">
         <file>Simple_ToDo.ico</file>
+        <file>Icons/brightness.png</file>
+        <file>Icons/favourite-2765.png</file>
+        <file>Icons/night-mode.png</file>
+        <file>Icons/plus.png</file>
+        <file>Icons/star-2768.png</file>
     </qresource>
 </RCC>

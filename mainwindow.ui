@@ -2,9 +2,6 @@
 <ui version="4.0">
  <class>MainWindow</class>
  <widget class="QMainWindow" name="MainWindow">
-  <property name="enabled">
-   <bool>true</bool>
-  </property>
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -385,9 +382,6 @@ QSlider::sub-page:horizontal:disabled{
    <bool>true</bool>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <property name="enabled">
-    <bool>true</bool>
-   </property>
    <property name="styleSheet">
     <string notr="true"/>
    </property>
@@ -422,7 +416,7 @@ QSlider::sub-page:horizontal:disabled{
      <enum>QTabWidget::Rounded</enum>
     </property>
     <property name="currentIndex">
-     <number>4</number>
+     <number>0</number>
     </property>
     <property name="documentMode">
      <bool>true</bool>
@@ -1420,6 +1414,9 @@ border-radius: 10px;</string>
     </widget>
    </widget>
    <widget class="QFrame" name="sideBar">
+    <property name="enabled">
+     <bool>true</bool>
+    </property>
     <property name="geometry">
      <rect>
       <x>660</x>
@@ -1474,8 +1471,8 @@ border-radius: 10px;</string>
       <string/>
      </property>
      <property name="icon">
-      <iconset>
-       <normaloff>../build-SimpleTo_Do-GUI--Desktop_Qt_6_6_0_MinGW_64_bit-Debug/plus.png</normaloff>../build-SimpleTo_Do-GUI--Desktop_Qt_6_6_0_MinGW_64_bit-Debug/plus.png</iconset>
+      <iconset resource="Resources.qrc">
+       <normaloff>:/Icons/plus.png</normaloff>:/Icons/plus.png</iconset>
      </property>
      <property name="flat">
       <bool>false</bool>
@@ -1497,8 +1494,8 @@ border-radius: 10px;</string>
       <string/>
      </property>
      <property name="icon">
-      <iconset>
-       <normaloff>../build-SimpleTo_Do-GUI--Desktop_Qt_6_6_0_MinGW_64_bit-Debug/night-mode.png</normaloff>../build-SimpleTo_Do-GUI--Desktop_Qt_6_6_0_MinGW_64_bit-Debug/night-mode.png</iconset>
+      <iconset resource="Resources.qrc">
+       <normaloff>:/Icons/night-mode.png</normaloff>:/Icons/night-mode.png</iconset>
      </property>
      <property name="iconSize">
       <size>
@@ -1532,8 +1529,8 @@ border-radius: 10px;</string>
       <string/>
      </property>
      <property name="icon">
-      <iconset>
-       <normaloff>../build-SimpleTo_Do-GUI--Desktop_Qt_6_6_0_MinGW_64_bit-Debug/brightness.png</normaloff>../build-SimpleTo_Do-GUI--Desktop_Qt_6_6_0_MinGW_64_bit-Debug/brightness.png</iconset>
+      <iconset resource="Resources.qrc">
+       <normaloff>:/Icons/brightness.png</normaloff>:/Icons/brightness.png</iconset>
      </property>
      <property name="shortcut">
       <string/>
@@ -1574,7 +1571,9 @@ border-radius: 10px;</string>
    </widget>
   </widget>
  </widget>
- <resources/>
+ <resources>
+  <include location="Resources.qrc"/>
+ </resources>
  <connections>
   <connection>
    <sender>spinBox_urgency</sender>
