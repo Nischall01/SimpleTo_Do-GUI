@@ -17,8 +17,7 @@
 using json = nlohmann::json;
 
 MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent)
-    , ui(new Ui::MainWindow)
+    : QMainWindow(parent), ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
 
@@ -45,12 +44,17 @@ void MainWindow::on_comboBox_day_currentIndexChanged(int index)
 {
     int selection;
     selection = index;
-    if (selection == 0) {
+    if (selection == 0)
+    {
         ui->dateEdit->hide();
-    } else if (selection == 1) {
+    }
+    else if (selection == 1)
+    {
         ui->dateEdit->hide();
         ui->dateEdit->setDate(QDate::currentDate().addDays(1));
-    } else if (selection == 2) {
+    }
+    else if (selection == 2)
+    {
         ui->dateEdit->show();
     }
 }
@@ -62,7 +66,8 @@ void MainWindow::setviewTables()
     db.setDatabaseName("Data.db");
 
     // Open the database
-    if (!db.open()) {
+    if (!db.open())
+    {
         QMessageBox::critical(this,
                               "Error",
                               "Unable to open the database: " + db.lastError().text());
@@ -88,7 +93,7 @@ void MainWindow::setviewTables()
     planned->setEditStrategy(QSqlTableModel::OnFieldChange);
     planned->select();
 
-    //Set models to respective QTablesetviewTables
+    // Set models to respective QTablesetviewTables
 
     ui->tableView_myday->setModel(myday);
     ui->tableView_daily->setModel(daily);
@@ -104,7 +109,8 @@ void MainWindow::addNewPlannedTask(const QString &TO_DO,
     QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
     db.setDatabaseName("Data.db");
 
-    if (!db.open()) {
+    if (!db.open())
+    {
         QMessageBox::critical(this,
                               "Error",
                               "Unable to open the database: " + db.lastError().text());
@@ -123,9 +129,12 @@ void MainWindow::addNewPlannedTask(const QString &TO_DO,
     query.bindValue(":description", description);
     query.bindValue(":status", "Pending");
 
-    if (query.exec()) {
+    if (query.exec())
+    {
         ui->Result->setText("Successfully added.");
-    } else {
+    }
+    else
+    {
         QMessageBox::critical(this, "Error", "Query execution failed: " + query.lastError().text());
     }
 
@@ -137,7 +146,8 @@ void MainWindow::addNewMyDayTask(const QString &todays_task)
     QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
     db.setDatabaseName("Data.db");
 
-    if (!db.open()) {
+    if (!db.open())
+    {
         QMessageBox::critical(this,
                               "Error",
                               "Unable to open the database: " + db.lastError().text());
@@ -149,9 +159,12 @@ void MainWindow::addNewMyDayTask(const QString &todays_task)
                   "(:today, :urgency, :time, :description, :status)");
     query.bindValue(":today", todays_task);
 
-    if (query.exec()) {
+    if (query.exec())
+    {
         ui->Result->setText("Successfully added.");
-    } else {
+    }
+    else
+    {
         QMessageBox::critical(this, "Error", "Query execution failed: " + query.lastError().text());
     }
 
@@ -166,7 +179,8 @@ void MainWindow::addNewDailyTask(const QString &TO_DO,
     QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
     db.setDatabaseName("Data.db");
 
-    if (!db.open()) {
+    if (!db.open())
+    {
         QMessageBox::critical(this,
                               "Error",
                               "Unable to open the database: " + db.lastError().text());
@@ -183,9 +197,12 @@ void MainWindow::addNewDailyTask(const QString &TO_DO,
     query.bindValue(":description", description);
     query.bindValue(":status", "Pending");
 
-    if (query.exec()) {
+    if (query.exec())
+    {
         ui->Result->setText("Successfully added.");
-    } else {
+    }
+    else
+    {
         QMessageBox::critical(this, "Error", "Query execution failed: " + query.lastError().text());
     }
 
@@ -196,30 +213,33 @@ void MainWindow::on_pushButton_OK_clicked()
 {
     comboBox_day_current_index = ui->comboBox_day->currentIndex();
 
-    TO_DO = ui->to_do->text(); //Retreives To_Do from the TO_DO text box
+    TO_DO = ui->to_do->text(); // Retreives To_Do from the TO_DO text box
 
-    urgency = ui->spinBox_urgency->value(); //Retreives urgency from the urgency box or the dial
+    urgency = ui->spinBox_urgency->value(); // Retreives urgency from the urgency box or the dial
 
-    time = ui->timeEdit->time(); //Retreives Time from the time box
+    time = ui->timeEdit->time(); // Retreives Time from the time box
 
     timeString = time.toString("hh:mm");
 
-    date = ui->dateEdit->date(); //Retreives Date from the date box
+    date = ui->dateEdit->date(); // Retreives Date from the date box
     dateString = date.toString("yyyy:MM:dd dddd");
 
     description = ui->to_do_Desc
-                      ->toPlainText(); //Retreives To_Do description from the to_do_desc text box
+                      ->toPlainText(); // Retreives To_Do description from the to_do_desc text box
 
-    if (!TO_DO.isEmpty()) {
-        if (comboBox_day_current_index == 3) {
+    if (!TO_DO.isEmpty())
+    {
+        if (comboBox_day_current_index == 3)
+        {
             addNewDailyTask(TO_DO, urgency, timeString, description);
             ui->Result->setText("Successfully added.");
             ui->to_do->clear();
             ui->to_do_Desc->clear();
             ui->spinBox_urgency->setValue(1);
             ui->tabWidget->setCurrentIndex(1);
-
-        } else {
+        }
+        else
+        {
             addNewPlannedTask(TO_DO, urgency, dateString, timeString, description);
             ui->Result->setText("Successfully added.");
             ui->to_do->clear();
@@ -229,7 +249,8 @@ void MainWindow::on_pushButton_OK_clicked()
         }
 
         // Clear the result message after 3 seconds
-        QTimer::singleShot(3000, this, [this]() { ui->Result->clear(); });
+        QTimer::singleShot(3000, this, [this]()
+                           { ui->Result->clear(); });
     }
 
     setviewTables();
@@ -271,7 +292,8 @@ void MainWindow::on_pushButton_add_clicked()
 void MainWindow::on_pushButton_ok_clicked()
 {
     todays_task = ui->lineEdit_todaysTask->text();
-    if (!todays_task.isEmpty()) {
+    if (!todays_task.isEmpty())
+    {
         addNewMyDayTask(todays_task);
         ui->lineEdit_todaysTask->clear();
     }
@@ -294,7 +316,8 @@ void MainWindow::loadSettings()
 {
     json data;
     std::ifstream file("settings.json");
-    if (!file.is_open()) {
+    if (!file.is_open())
+    {
         QMessageBox::critical(this, "Error", "Unable to open settings.json: ");
         return;
     }
@@ -304,23 +327,30 @@ void MainWindow::loadSettings()
     int theme_mode = data["DefaultThemeMode"]; // 0 is Dark mode and 1 is light mode
     int urgency_mode = data["DefaultUrgencyMode"];
 
-    if (theme_mode == 0) {
+    if (theme_mode == 0)
+    {
         on_pushButton_dark_clicked();
         ui->radioButton_Dark->setChecked(true);
-    } else {
+    }
+    else
+    {
         on_pushButton_light_clicked();
         ui->radioButton_Light->setChecked(true);
     }
-    if (urgency_mode == 0) {
+    if (urgency_mode == 0)
+    {
         ui->radioButton_Dial->setChecked(true);
-    } else {
+    }
+    else
+    {
         ui->radioButton_SpinBox->setChecked(true);
     }
 }
 
 void MainWindow::on_radioButton_Dial_toggled(bool checked)
 {
-    if (checked) {
+    if (checked)
+    {
         ui->dial_urgency->show();
         ui->spinBox_urgency->setButtonSymbols(QAbstractSpinBox::NoButtons);
         ui->spinBox_urgency->setReadOnly(checked);
@@ -330,7 +360,8 @@ void MainWindow::on_radioButton_Dial_toggled(bool checked)
 
 void MainWindow::on_radioButton_SpinBox_toggled(bool checked)
 {
-    if (checked) {
+    if (checked)
+    {
         ui->dial_urgency->hide();
         ui->spinBox_urgency->setButtonSymbols(QAbstractSpinBox::UpDownArrows);
         ui->spinBox_urgency->setReadOnly(false);
@@ -340,14 +371,16 @@ void MainWindow::on_radioButton_SpinBox_toggled(bool checked)
 
 void MainWindow::on_radioButton_Dark_toggled(bool checked)
 {
-    if (checked) {
+    if (checked)
+    {
         on_pushButton_dark_clicked();
     }
 }
 
 void MainWindow::on_radioButton_Light_toggled(bool checked)
 {
-    if (checked) {
+    if (checked)
+    {
         on_pushButton_light_clicked();
     }
 }
@@ -364,7 +397,8 @@ void MainWindow::on_pushButton_settings_Save_clicked()
                                      : 1; // Save 0 for Dark mode, 1 for Light mode
 
     std::ofstream file("settings.json");
-    if (!file.is_open()) {
+    if (!file.is_open())
+    {
         QMessageBox::critical(this, "Error", "Unable to open settings.json: ");
         return;
     }
